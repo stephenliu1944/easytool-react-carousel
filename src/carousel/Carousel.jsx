@@ -21,10 +21,12 @@ export default class Carousel extends Component {
             startAngle: 0, 
             endAngle: 360
         },         
-        keyframe: {                 // TODO: 关键帧
+        keyframe: {                 // TODO: 关键帧, 如何保留上一针的位置
             90: {
                 width: 100,
-                height: 100
+                height: 100,
+                top(y){},
+                left(x){}
             }                       // 回调
         }
     }
@@ -157,5 +159,4 @@ Carousel.propTypes = {
     speed: PropTypes.number,             
     anticlockwise: PropTypes.bool,       
     pause: PropTypes.bool
-    // todo: FILTER        
 };
