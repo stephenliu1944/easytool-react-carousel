@@ -53,8 +53,10 @@ export default class Carousel extends Component {
     }
 
     render() {
+        let { id, className, style = {} } = this.props;
+
         return (
-            <div style={{ position: 'relative' }}>
+            <div id={id} className={className} style={{ position: 'relative', ...style }}>
                 { this.state.elements }
             </div>
         );

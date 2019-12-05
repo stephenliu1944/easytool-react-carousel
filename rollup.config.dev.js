@@ -1,6 +1,7 @@
 import json from 'rollup-plugin-json';
 import serve from 'rollup-plugin-serve';
 import replace from 'rollup-plugin-replace';
+import postcss from 'rollup-plugin-postcss';
 import htmlTemplate from 'rollup-plugin-generate-html-template';
 import base, { rollupMerge } from './rollup.config.base';
 import pkg from './package.json';
@@ -14,11 +15,12 @@ export default rollupMerge(base(), {
     },
     plugins: [
         json(),
+        postcss(),
         // web服务
         serve({
             host: '0.0.0.0',
             port: local,
-            contentBase: ['build'],
+            contentBase: ['build', 'test'],
             openPage: 'index.html',
             historyApiFallback: 'index.html'
         }),

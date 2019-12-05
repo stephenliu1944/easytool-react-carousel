@@ -8,7 +8,9 @@ module.exports = function(api) {
     api.cache(true);
     
     var env = process.env.NODE_ENV;
-    var presets = [];
+    var presets = [
+        '@babel/preset-react'
+    ];
     var plugins = [
         '@babel/plugin-transform-runtime',
         '@babel/plugin-proposal-class-properties',

@@ -55,9 +55,10 @@ export default function(filename = 'index.js') {
                 mainFields: DEV ? ['browser', 'main'] : ['module', 'main']  // 读取第三方库 package.json 文件的入口属性
             }),
             commonjs({
-                // namedExports: DEV && {
-                //     'react': ['Component']
-                // }
+                namedExports: DEV && {
+                    'react': ['Component', 'Children'],
+                    'react-dom': ['render']
+                }
             }), 
             // import file
             url({
