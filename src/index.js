@@ -1,1 +1,1 @@
-export default from './carousel/Carousel';
+export default from './carousel';
