@@ -1,109 +1,211 @@
 # @easytool/react-carousel
-Use for development JS library.
+React 轨道轮播UI组件
 
 ## Install
+npm i @easytool/react-carousel
+
+## Dependencies
+```
+react:    v16.x.x
+prop-types: v15.x.x
+```
 
 ## Usage
+```jsx
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import Carousel from '@easytool/react-carousel';
+
+function App(props) {
+    return (
+        <Carousel {...this.state.carousel} >
+            <img src={ xxx } width={200} height={200} />
+            <div>
+                <img src={ xxx } width={200} height={200} />
+            </div>
+            // offset设置该元素的偏移量
+            <img src={ xxx } width={200} height={200} offset={[50, 50]} />
+            // ignore忽略该元素
+            <img src={ xxx } width={200} height={200} ignore="true" />
+        </Carousel>
+        // 支持多个 Carousel 同时使用
+        <Carousel>
+            ...
+        </Carousel>>
+    );
+}
+
+render(
+    <App />,
+    document.getElementById('app')
+);
+```
+
+### 绑定事件
+```jsx
+export default class App extends Component {
+
+    handleClick = () => {
+        ...
+    }
+
+    handleMouseEnter = (e) => {
+        this.setState({
+            carousel: {
+                ...this.state.carousel,
+                pause: true
+            }
+        });
+    }
+
+    handleMouseLeave = (e) => {
+        this.setState({ 
+            carousel: {
+                ...this.state.carousel,
+                pause: false
+            }
+        });
+    }
+
+    render() {
+        return (
+            <Carousel {...this.state.carousel} >
+                <img src={ aPNG } width={200} height={200} onClick={this.handleClick} />
+                <img src={ bPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+            </Carousel>
+        );
+    }
+}
+```
+  
+窗口缩放自适应
+```jsx
+const CENTER_HEIGHT_OFFSET = 40;
+const RADIUS_X_PERCENT = 0.625;     // 600(x轴半径) / (document.documentElement.clientWidth / 2)
+const RADIUS_Y_PERCENT =  0.451;    // 210(y轴半径) / (document.documentElement.clientHeight / 2)
+export default class App extends Component {
+
+    state = {
+        carousel: {
+            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
+            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
+            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.handleWindowResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleWindowResize);
+    }
+
+    handleWindowResize = () => {
+        this.setState({
+            carousel: {
+                ...this.state.carousel,
+                center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
+                radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
+                radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
+            }
+        });
+    }
+
+    render() {
+        return (
+            <Carousel {...this.state.carousel} >
+                <img src={ aPNG } width={200} height={200} onClick={this.handleClick} />
+                <img src={ bPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+            </Carousel>
+        );
+    }
+}
+```
+
+### 配置属性
+```jsx
+const KeyframeStyle = {
+    width: 300,
+    height: 500,
+    top(y) { return y - 100;},
+    left(x) { return x - 50;}
+};
+const CENTER_HEIGHT_OFFSET = 40;
+const RADIUS_X_PERCENT = 0.625;
+const RADIUS_Y_PERCENT =  0.451;
+export default class App extends Component {
+
+    state = {
+        carousel: {
+            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
+            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,                // x轴椭圆半径
+            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT,               // y轴椭圆半径
+            interval: 1,                // 每个点的间距, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
+            offset: [-96, -166],        // 每个元素的偏移量
+            anticlockwise: true,        // 是否逆时针旋转
+            speed: 1,                   // 元素运动速度
+            pause: false,               // 是否暂停
+            keyframe: {                 // 关键角度样式
+                70: KeyframeStyle,                     
+                71: KeyframeStyle,                     
+                72: KeyframeStyle,                     
+                73: KeyframeStyle,                     
+                74: KeyframeStyle,                     
+                75: KeyframeStyle,                     
+                76: KeyframeStyle,                     
+                77: KeyframeStyle,                     
+                78: KeyframeStyle,                     
+                79: KeyframeStyle,                     
+                80: KeyframeStyles
+            }
+        }
+    }
+
+    render() {
+        return (
+            <Carousel {...this.state.carousel} >
+                <img src={ xxx } width={200} height={200} />
+                <img src={ xxx } width={200} height={200} />
+                <img src={ xxx } width={200} height={200} />
+                <img src={ xxx } width={200} height={200} />
+            </Carousel>
+        );
+    }
+}
+```
 
 ## API
+```
+<Carousel 
+    center: array, 椭圆的中心点, 默认为屏幕中心.
+    radiusX: number, 椭圆的 x 轴半径, x 和 y 相等时为正圆, 默认为500.
+    radiusY: number, 椭圆的 y 轴半径, x 和 y 相等时为正圆, 默认为300.
+    interval: number, 椭圆中每个相邻坐标点的间距, 默认为1, 目前最小为0.1, 值越小生成的圆点坐标越多, 为1生成360个点, 为0.1生成3600个点.
+    offset: array, 椭圆轨道上每个元素的全局偏移量, 还可在元素自身属性上设置偏移量, 默认为[0, 0].
+    anticlockwise: boolean, 是否逆时针旋转, 默认false.
+    speed: number, 每个元素的移动速度, 最小值依赖 interval 的值. 默认为 1.
+    pause: boolean, 是否暂停, 默认false.
+    distribution: object{startAngle, endAngle}|array[angle1, angle2, ...]|function(points), 每个元素在圆上的初始分布. 默认为: {startAngle: 0, endAngle: 360},
+        为 object 时表示在指定角度均匀分布, 如: {startAngle: 0, endAngle: 180};
+        为 array 时表示手动分布, 如: [0, 90, 180, 270], 数组元素个数需与轨道上的元素个数对应;
+        为 function 表示自定义分布, 方法接收圆上所有坐标的数组, 返回筛选出的节点数组作为分布点.
+    keyframe: object, 关键帧(角度)样式, object.key 为数字表示角度, object.value 为使用的样式, left, top 属性可以为方法, 接收当前定位的x和y坐标.
+        如: {
+                180: {
+                    width: 100,
+                    height: 100,
+                    left(x) => x,
+                    top(y) => y
+                }
+            }
+>
+    <child
+        offset: array, 轨道上元素自身的偏移量, 默认为[0, 0]. 会叠加到全局offset上.
+        ignore: string, 是否忽略该元素, 忽略后不会在轨道上移动, 如: "true".
+    />
+</Carousel>
+```
 
 ## License
-
-## 项目介绍
-该项目脚手架用于开发纯JS库, 支持打包为 UMD, ESModule(esm), CommonJS(cjs) 格式.
-
-### 项目依赖
-```
-node:    v8.x.x
-npm:     v6.x.x
-rollup:  v1.x.x
-eslint:  v5.x.x
-babel:   v7.x.x
-gulp:    v4.x.x
-jest:   v23.x.x
-```
-
-### 使用教程
-从git拉取项目代码后, 执行:
-```
-npm install
-```
-
-### 注册和登陆
-```
-npm adduser      // 注册账号, 执行后会依次提示输入用户名, 密码, 邮箱.
-npm login        // 登录npm服务.
-```
-
-### 模块配置
-1. 在 package.json 中对模块的相关信息进行配置, 参考npm官方文档.
-2. name 为模块的名字, libraryName 为UMD格式打包后的全局变量名, 这两项为必填.
-
-### 服务配置
-本地服务端口默认为8080, 在 package.json > devEnvironments > servers > local 中可修改端口配置.
-
-### 本地调试
-1. 开发阶段执行 bin/startup.bat 启动开发服务器, 模块开发过程中可在 src/dev.js 文件中模拟外部使用模块的情况进行本地调试.
-2. 开发完成后可以在 bin/test.bat 执行单元测试.(需先在test/目录进行单元测试编码, 测试框架为jest).
-
-### link调试
-1. 将模块引入到项目中调试执行 bin/link , 然后在需要引入模块的项目中执行 npm link 模块名.
-2. 如需与项目联调, 可以执行 bin/package-watch, 即可实时打包.
-
-### 打包发布
-1. 发布X版本号执行 bin/publish-major.bat, 表示有重大更新, 并且不兼容老的版本.
-2. 发布Y版本号执行 bin/publish-minor.bat, 表示有功能更新, 并且兼容老的版本.
-3. 发布Z版本号执行 bin/publish-patch.bat, 表示有bug修复, 并且兼容老的版本.
-4. 发布预发布版本号执行 bin/publish-prerelease.bat, 表示该版本还在开发测试中, 可能会有较大改动.
-5. 从服务端卸载模块执行 bin/unpublish.bat.
-
-### 目录结构
-```
-bin                                         // 可执行命令目录.
-|-build-dev.bat                             // 将src目录中的源码通过 rollup.config.dev.js 编译到build目录.
-|-build-prod.bat                            // 将src目录中的源码通过 rollup.config.prod.js 编译到build目录.
-|-git-push.bat                              // 更新 git 版本号.
-|-link.bat                                  // 执行 npm link, 用于关联到项目调试.
-|-lint.bat                                  // 执行eslint生产环境代码校验.
-|-package.bat                               // 将src目录中的源码通过 rollup.config.prod.js 编译到dist目录.
-|-package-watch.bat                         // 用于关联到项目时联调持续打包.
-|-publish-major.bat                         // 发布新X版本.
-|-publish-minor.bat                         // 发布新Y版本.
-|-publish-patch.bat                         // 发布新Z版本.
-|-publish-prerelease.bat                    // 发布预发布版.
-|-startup.bat                               // 启动开发环境web服务(window)
-|-startup.sh                                // 启动开发环境web服务(linux)
-|-test.bat                                  // 执行jest单元测试(window)
-|-test.sh                                   // 执行jest单元测试(linux)
-|-unpublish.bat                             // 用于从服务端下架模块
-build                                       // 代码编译后生成的临时目录
-dist                                        // 代码打包后生成的临时目录
-src                                         // 项目源码目录
-|-constants                                 // 常量文件.
-    |-common.js                             // 常用常量.
-|-_utils                                    // 模块内部工具文件.
-    |-common.js                             // 常用工具库.
-|-module1                                   // 模块组件1
-    |-index.js                              // 组件的索引文件, 便于外部快速引用.
-    |-module1.js                            // js模块文件.
-|-module2                                   // 模块组件2
-    |-index.js                              // 组件的索引文件, 便于外部快速引用.
-    |-module2.js                            // js模块文件.
-|-index.js                                  // 模块打包时的入口js文件.
-|-dev.js                                    // 本地调试使用的模块引入文件.
-|-template.html                             // 开发调试页面模板文件.
-test                                        // 测试代码目录, 目录结构同src
-.eslintignore                               // eslint忽略校验配置文件.
-.eslintrc.json                              // eslint开发环境代码校验配置文件.
-.eslintrc.prod.json                         // eslint生产环境代码校验配置文件, 比开发环境更加严格, 发版和提交代码时会自动执行此配置校验代码.
-.gitignore                                  // git忽略提交配置文件.
-package.json                                // npm配置文件.
-README.md                                   // 项目开发文档.
-babel.config.js                             // babel配置文件.
-fileTransformer.js                          // jest单元测试时的文件转换器.
-jest.config.js                              // jest单元测试配置.
-gulpfile.js                                 // 项目打包, 发布脚本.
-rollup.config.dev.js                        // rollup开发环境配置文件.
-rollup.config.prod.js                       // rollup生产环境配置文件.
-```
-
+MIT

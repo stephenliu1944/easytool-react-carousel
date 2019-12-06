@@ -1,18 +1,3 @@
-export function bindElementsPoint(elements = [], points = []) {
-    var index = 0;
-
-    return Children.map(elements, (el) => {
-        let ignore = el.props.ignore;  
-        
-        if (ignore === true || ignore === 'true') {
-            return el;
-        }
-
-        return React.cloneElement(el, {
-            point: points[index++]
-        });    
-    });
-}
 // 乘方
 export function square(num) {
     return num * num;
@@ -57,41 +42,4 @@ export function drawEllipse(options = {}) {
 
     // 返回椭圆上的所有坐标点数组
     return points;
-}
-
-export function distributePointsByAngle(points = [], angles = []) {
-    return points.filter((point) => {
-        return angles.includes(point.angle);
-    });
-}
-
-// 该分布算法需要抽象为参数方法, 接收 points
-export function distributePointsByCount(options) {
-    let { points = [], count = 0, startAngle = 0, endAngle = 360 } = Object.assign({}, options);
-    let filterPoints;
-
-    if ( startAngle > 0 || endAngle < 360) {
-        count -= 1;
-        filterPoints = points.filter((point) => {
-            return startAngle <= point.angle && point.angle <= endAngle;
-        });
-    } else {    
-        filterPoints = points;
-    }
-    
-    let avgAngle = (endAngle - startAngle) / count;
-    
-    let distPoints = filterPoints.filter((point) => {
-        return point.angle % avgAngle === 0;
-    });
-    
-    return distPoints;
-}
-// 找上一个节点
-export function findPrevPoint(point, points, speed = 1) {
-    return points[point.index - speed] || points[points.length - 1];
-}
-// 找下一个节点
-export function findNextPoint(point, points, speed = 1) {
-    return points[point.index + speed] || points[0];
 }

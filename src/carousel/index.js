@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component, Children } from 'react';
+import { drawEllipse } from 'utils/geometry';
 
 export default class Carousel extends Component {
     
@@ -10,7 +11,7 @@ export default class Carousel extends Component {
     static defaultProps = {
         center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2],  // 中心点
         radiusX: 500,               // x轴椭圆半径
-        radiusY: 200,               // y轴椭圆半径
+        radiusY: 300,               // y轴椭圆半径
         interval: 1,                // 轨道上的每个坐标点占多少度, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
         offset: [0, 0],             // 每个元素的偏移量
         speed: 1,                   // 元素每次移动几格, 最少为1
@@ -231,51 +232,6 @@ function distributePointsByCount(options) {
     });
     
     return distPoints;
-}
-// 乘方
-function square(num) {
-    return num * num;
-}
-// 弧度转角度
-function radianToAngle(radian) {
-    return 180 / Math.PI * radian;
-}
-// 角度转弧度
-function angleToRadian(angle) {
-    return Math.PI / 180 * angle;
-}
-// 画椭圆形
-function drawEllipse(options = {}) {
-    const { sin, cos, sqrt } = Math;
-    const precision = 10000;
-    let { center = [], offset = [], radiusX = 500, radiusY = 100, interval = 1 } = Object.assign({}, options);
-    let [cx = 0, cy = 0] = center;
-    let [fx = 0, fy = 0] = offset;
-    let a = radiusX;
-    let b = radiusY;
-    let points = [];
-    let index = 0;
-
-    for (let i = 0; i < 360; ) {
-        let x, y; 
-        let radian = angleToRadian(i);
-
-        // 椭圆坐标计算公式
-        x = (a * b * cos(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
-        y = (a * b * sin(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
-
-        points.push({
-            x: x + cx + fx,
-            y: y + cy + fy,
-            angle: i,
-            index: index++
-        });
-        // 避免 0.1 + 0.2 的问题, TODO: 优化
-        i = (i * precision + interval * precision) / precision;
-    }
-
-    // 返回椭圆上的所有坐标点数组
-    return points;
 }
 // 找上一个节点
 function findPrevPoint(point, points, speed = 1) {

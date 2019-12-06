@@ -3,17 +3,15 @@
  */
 import './app.css';
 import Carousel from '../src/index';
-import galaxyJPG from './images/galaxy.jpg';
-import aJPG from './images/a.jpg';
-import bJPG from './images/b.jpg';
-import cJPG from './images/c.jpg';
-import dJPG from './images/d.jpg';
-import eJPG from './images/e.jpg';
-import fJPG from './images/f.jpg';
+import aPNG from './images/a.png';
+import bPNG from './images/b.png';
+import cPNG from './images/c.png';
+import dPNG from './images/d.png';
+import ePNG from './images/e.png';
+import fPNG from './images/f.png';
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
-console.log(aJPG);
 const KeyframeStyle = {
     width: 300,
     height: 500,
@@ -128,20 +126,14 @@ export default class App extends Component {
         return (
             <div className="app">
                 <Carousel {...this.state.carousel} >
-                    <img src={ aJPG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={bJPG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={cJPG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={dJPG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={ eJPG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={fJPG } width={200} height={200} onClick={this.gotoAssessment} />
-                </Carousel>
-                <Carousel {...this.state.carousel} radiusX={document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT} radiusY={document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT}>
-                    <img src={ aJPG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={bJPG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={cJPG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={dJPG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={ eJPG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={fJPG } width={200} height={200} onClick={this.gotoAssessment} />
+                    <img src={ aPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="animation" src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="animation" src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="animation" src={ ePNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <div>
+                        <img src={fPNG } width={200} height={200} onClick={this.gotoAssessment} />
+                    </div>
                 </Carousel>
             </div>
         );
