@@ -82,6 +82,8 @@ export default class Carousel extends Component {
 
         if (!pause) {
             let distributionIndex = 0;
+            // 注意: Children.map() 会给每个 key 递归增加层级符号.$.$.$key..., react issues 11464.
+            // TODO: 更换此方法
             this.state.elements = Children.map(children, (child, index) => {
                 // 注意: 这里第一次 elements 是空的, 是从 child 取值, 之后是从 elements[index] 中取值.
                 let element = elements[index] || child;
@@ -105,7 +107,6 @@ export default class Carousel extends Component {
                 let x = nextPoint.x + offset[0] + childOffset[0];
                 let y = nextPoint.y + offset[1] + childOffset[1];
                 let nextStyle = this.getNextStyle(keyframe[nextPoint.angle], backStyle || currStyle, x, y);
-                // 注意: 这里必须从 this.props.children 原始节点中拷贝, 否则key会递归.$.$.$key...增长, react issues 11464.
                 let copyElement = React.cloneElement(child, {
                     style: nextStyle,
                     point: nextPoint,
