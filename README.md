@@ -1,11 +1,6 @@
 # @easytool/react-carousel
 React 轨道轮播UI组件
 
-## Dependencies
-```
-react:    v16.x.x
-prop-types: v15.x.x
-```
 ## Install
 ```
 npm i @easytool/react-carousel
