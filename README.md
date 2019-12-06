@@ -19,20 +19,15 @@ import Carousel from '@easytool/react-carousel';
 
 function App(props) {
     return (
-        <Carousel {...this.state.carousel} >
+        <Carousel>
             <img src={ xxx } width={200} height={200} />
-            <div>
-                <img src={ xxx } width={200} height={200} />
-            </div>
+            <img src={ xxx } width={200} height={200} />
+            <img src={ xxx } width={200} height={200} />
             // offset设置该元素的偏移量
             <img src={ xxx } width={200} height={200} offset={[50, 50]} />
             // ignore忽略该元素
             <img src={ xxx } width={200} height={200} ignore="true" />
         </Carousel>
-        // 支持多个 Carousel 同时使用
-        <Carousel>
-            ...
-        </Carousel>>
     );
 }
 
@@ -42,9 +37,33 @@ render(
 );
 ```
 
+### 多个 Carousel
+```jsx
+function App(props) {
+    return (
+        <Carousel>
+            <img src={ xxx } width={200} height={200} />
+            <img src={ xxx } width={200} height={200} />
+        </Carousel>
+        <Carousel>
+            <div>
+                <img src={ xxx } width={200} height={200} />
+            </div>
+            <div>
+                <img src={ xxx } width={200} height={200} />
+            </div>
+        </Carousel>>
+    );
+}
+```
+
 ### 绑定事件
 ```jsx
 export default class App extends Component {
+
+    state = {
+        carousel: {}
+    }
 
     handleClick = () => {
         ...
@@ -79,7 +98,7 @@ export default class App extends Component {
 }
 ```
   
-窗口缩放自适应
+### 窗口自适应
 ```jsx
 const CENTER_HEIGHT_OFFSET = 40;
 const RADIUS_X_PERCENT = 0.625;     // 600(x轴半径) / (document.documentElement.clientWidth / 2)
