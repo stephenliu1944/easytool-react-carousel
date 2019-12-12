@@ -11,15 +11,24 @@ html, body{
     width: 100vw;
 }
 
+.hidden {
+    display: none;
+}
+
 .animation{
-    animation: myfirst 3s infinite;
+    animation-name: myfirst;
+    animation-duration: 5s;
+    animation-timing-function: ease-in-out;
 }
 
 @keyframes myfirst{
     0%   {
-        transform: rotate(0);
+        opacity: 1;
+    }
+    50%   {
+        opacity: 0;
     }
     100% {
-        transform: rotate(360deg);
+        opacity: 1;
     }
 }

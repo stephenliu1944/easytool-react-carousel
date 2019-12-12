@@ -205,19 +205,22 @@ export default class App extends Component {
         为 object 时表示在指定角度均匀分布, 如: {startAngle: 0, endAngle: 180};
         为 array 时表示手动分布, 如: [0, 90, 180, 270], 数组元素个数需与轨道上的元素个数对应;
         为 function 表示自定义分布, 方法接收圆上所有坐标的数组, 返回筛选出的节点数组作为分布点.
-    keyframe: object, 关键帧(角度)样式, object.key 为数字表示角度, object.value 为使用的样式, left, top 属性可以为方法, 接收当前定位的x和y坐标.
+    keyframe: object, 全局关键帧(角度)样式, object.key 为数字表示角度, object.value 为使用的样式, left, top 属性可以为方法, 接收当前定位的x和y坐标.
         如: {
-                180: {
+                180: {                      // 覆盖的样式
                     width: 100,
                     height: 100,
                     left(x) => x,
                     top(y) => y
-                }
+                },
+                90: 'className',            // 替换的class
+                90: className => className  // 值为方法时接收当前元素的 className, 返回值将作为元素新的 className.
             }
 >
     <child
         offset: array, 轨道上元素自身的偏移量, 默认为[0, 0]. 会叠加到全局offset上.
         ignore: string, 是否忽略该元素, 忽略后不会在轨道上移动, 如: "true".
+        keyframe: object, 元素关键帧(角度)样式, 会覆盖全局关键帧样式.
     />
 </Carousel>
 ```

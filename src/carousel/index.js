@@ -87,7 +87,7 @@ export default class Carousel extends Component {
             this.state.elements = Children.map(children, (child, index) => {
                 // 注意: 这里第一次 elements 是空的, 是从 child 取值, 之后是从 elements[index] 中取值.
                 let element = elements[index] || child;
-                let { style: currStyle = {}, backstyle: backStyle, ignore, point, offset: childOffset = [0, 0] } = element.props;
+                let { className, style: currStyle = {}, backstyle: backStyle, keyframe: elKeyframe = [], ignore, point, offset: childOffset = [0, 0] } = element.props;
 
                 if (ignore === true || ignore === 'true') {
                     // 注意: 这里要返回原始节点对象
@@ -106,11 +106,12 @@ export default class Carousel extends Component {
 
                 let x = nextPoint.x + offset[0] + childOffset[0];
                 let y = nextPoint.y + offset[1] + childOffset[1];
-                let nextStyle = this.getNextStyle(keyframe[nextPoint.angle], backStyle || currStyle, x, y);
+                let keyframeOpt = elKeyframe[nextPoint.angle] || keyframe[nextPoint.angle];
                 let copyElement = React.cloneElement(child, {
-                    style: nextStyle,
-                    point: nextPoint,
-                    backstyle: this.getBackupStyle(keyframe[nextPoint.angle], backStyle || currStyle)    // 保留关键帧之前的样式 
+                    className: this.getNextClassName(className, keyframeOpt),
+                    style: this.getNextStyle(currStyle, keyframeOpt, x, y),
+                    point: nextPoint
+                    // backstyle: this.getBackupStyle(backStyle || currStyle, keyframe[nextPoint.angle])    // 保留关键帧之前的样式 
                 });    
 
                 return copyElement;
@@ -120,21 +121,44 @@ export default class Carousel extends Component {
         }
 
         this._animator = requestAnimationFrame(this.rotateElements);
+        // this._animator = setTimeout(this.rotateElements, 60);
     }
+    // 计算下一帧的class
+    getNextClassName(currClassName = '', keyframeClassName) {
+        var nextClassName;
 
-    getNextStyle(keyframeStyle, currStyle, x, y) {
+        if (typeof keyframeClassName === 'string') {
+            nextClassName = keyframeClassName;
+        } else if (typeof keyframeClassName === 'function') {
+            nextClassName = keyframeClassName(currClassName);            
+            
+            if (nextClassName === null || nextClassName === undefined) {
+                nextClassName = '';
+            }
+
+            if (typeof nextClassName !== 'string') {
+                throw 'keyframe function must return a string value.';
+            }
+        } else {
+            nextClassName = currClassName;
+        }
+
+        return nextClassName.trim();
+    }
+    // 计算下一帧的样式
+    getNextStyle(currStyle, keyframeStyle, x, y) {
         var nextStyle = {};
-        // 检测是否在关键帧(角度)位置
-        if (keyframeStyle) {
+        // 有关键帧使用关键帧样式
+        if (typeof keyframeStyle === 'object' && keyframeStyle !== null) {
             Object.assign(nextStyle, keyframeStyle);
             // 让用户可以调整 top, left
             if (typeof nextStyle.top === 'function') {
-                nextStyle.top = nextStyle.top(y);
+                nextStyle.top = nextStyle.top(y) || y;
             }
             if (typeof nextStyle.left === 'function') {
-                nextStyle.left = nextStyle.left(x);
+                nextStyle.left = nextStyle.left(x) || x;
             }
-        // 非关键帧情况线判断是否有上一次的样式备份, 如果有则还原样式, 没有则使用当前样式
+        // 无关键帧样式只移动位置
         } else {
             Object.assign(nextStyle, currStyle, {
                 left: x,
@@ -146,7 +170,7 @@ export default class Carousel extends Component {
         return nextStyle;
     }
 
-    getBackupStyle(keyframeStyle, backStyle) {
+    getBackupStyle(backStyle, keyframeStyle) {
         if (keyframeStyle) {
             // 保留上一针的样式 
             return backStyle;

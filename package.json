@@ -1,6 +1,6 @@
 {
   "name": "@easytool/react-carousel",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "React Carousel UI Component",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -32,7 +32,7 @@
     "start": "cross-env NODE_ENV=development rollup -c rollup.config.dev.js -w",
     "lint:js": "eslint src/**/*.{js,jsx} -c .eslintrc.prod.json --fix",
     "test": "jest",
-    "package": "cross-env BUILD_PATH=dist npm run build:prod && gulp zip",
+    "package": "cross-env BUILD_PATH=dist npm run build:prod",
     "package:watch": "cross-env BUILD_PATH=dist NODE_ENV=production rollup -w -c rollup.config.prod.js",
     "publish:prerelease": "npm run package && gulp version-prerelease && npm publish --access=public",
     "publish:patch": "npm run package && gulp version-patch && npm publish --access=public",

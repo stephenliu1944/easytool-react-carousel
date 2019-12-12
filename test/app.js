@@ -36,47 +36,12 @@ export default class App extends Component {
             pause: false,               // 是否暂停
             // distribution: [90, 162, 234, 306, 18],               // 手动分配元素所在位置(角度)
             keyframe: {                 // TODO: 关键帧, 如何保留上一针的位置
-                // 70: KeyframeStyle,                     
-                // 71: KeyframeStyle,                     
-                // 72: KeyframeStyle,                     
-                // 73: KeyframeStyle,                     
-                // 74: KeyframeStyle,                     
-                // 75: KeyframeStyle,                     
-                // 76: KeyframeStyle,                     
-                // 77: KeyframeStyle,                     
-                // 78: KeyframeStyle,                     
-                // 79: KeyframeStyle,                     
-                // 80: KeyframeStyle,                     
-                // 81: KeyframeStyle,                     
-                // 82: KeyframeStyle,                     
-                // 83: KeyframeStyle,                     
-                // 84: KeyframeStyle,                     
-                // 85: KeyframeStyle,                     
-                // 86: KeyframeStyle,                     
-                // 87: KeyframeStyle,                     
-                // 88: KeyframeStyle,                     
-                // 89: KeyframeStyle,                     
-                // 90: KeyframeStyle,
-                // 91: KeyframeStyle,                                          
-                // 92: KeyframeStyle,
-                // 93: KeyframeStyle,
-                // 94: KeyframeStyle,
-                // 95: KeyframeStyle,
-                // 96: KeyframeStyle,
-                // 97: KeyframeStyle,
-                // 98: KeyframeStyle,
-                // 99: KeyframeStyle,
-                // 100: KeyframeStyle,
-                // 101: KeyframeStyle,
-                // 102: KeyframeStyle,
-                // 103: KeyframeStyle,
-                // 104: KeyframeStyle,
-                // 105: KeyframeStyle,
-                // 106: KeyframeStyle,
-                // 107: KeyframeStyle,
-                // 108: KeyframeStyle,
-                // 109: KeyframeStyle,
-                // 110: KeyframeStyle
+                180: c => {
+                    return c + ' animation';
+                }, 
+                0: c => {
+                    return c.replace('animation', '');
+                }
             }
         }
     }
@@ -126,13 +91,13 @@ export default class App extends Component {
         return (
             <div className="app">
                 <Carousel {...this.state.carousel} >
-                    <img src={ aPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="animation" src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="animation" src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="animation" src={ ePNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="1" src={aPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="2" src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="3" src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img src={ePNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
                     <div>
-                        <img src={fPNG } width={200} height={200} onClick={this.gotoAssessment} />
+                        <img src={fPNG} width={200} height={200} onClick={this.gotoAssessment} />
                     </div>
                 </Carousel>
             </div>
