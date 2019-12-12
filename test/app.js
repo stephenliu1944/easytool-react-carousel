@@ -36,6 +36,11 @@ export default class App extends Component {
             pause: false,               // 是否暂停
             // distribution: [90, 162, 234, 306, 18],               // 手动分配元素所在位置(角度)
             keyframe: {                 // TODO: 关键帧, 如何保留上一针的位置
+                90: {
+                    transform(x, y) {
+                        return 'translate(10px, 10px)';
+                    }
+                },
                 180: c => {
                     return c + ' animation';
                 }, 

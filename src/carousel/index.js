@@ -125,47 +125,39 @@ export default class Carousel extends Component {
     }
     // 计算下一帧的class
     getNextClassName(currClassName = '', keyframeClassName) {
-        var nextClassName;
+        var nextClassName = typeof keyframeClassName === 'function' || typeof keyframeClassName === 'string' 
+            ? keyframeClassName : currClassName;
+        
+        if (typeof nextClassName === 'function') {
+            nextClassName = nextClassName(currClassName) || '';            
+        }
 
-        if (typeof keyframeClassName === 'string') {
-            nextClassName = keyframeClassName;
-        } else if (typeof keyframeClassName === 'function') {
-            nextClassName = keyframeClassName(currClassName);            
-            
-            if (nextClassName === null || nextClassName === undefined) {
-                nextClassName = '';
-            }
-
-            if (typeof nextClassName !== 'string') {
-                throw 'keyframe function must return a string value.';
-            }
-        } else {
-            nextClassName = currClassName;
+        if (typeof nextClassName !== 'string') {
+            throw 'keyframe function must return a string value.';
         }
 
         return nextClassName.trim();
     }
     // 计算下一帧的样式
-    getNextStyle(currStyle, keyframeStyle, x, y) {
-        var nextStyle = {};
-        // 有关键帧使用关键帧样式
+    getNextStyle(currStyle = {}, keyframeStyle, x, y) {
+        var nextStyle = {
+            ...currStyle, 
+            left: x,
+            top: y,
+            position: 'absolute'
+        };
+        // 优先使用关键帧样式
         if (typeof keyframeStyle === 'object' && keyframeStyle !== null) {
-            Object.assign(nextStyle, keyframeStyle);
-            // 让用户可以调整 top, left
-            if (typeof nextStyle.top === 'function') {
-                nextStyle.top = nextStyle.top(y) || y;
-            }
-            if (typeof nextStyle.left === 'function') {
-                nextStyle.left = nextStyle.left(x) || x;
-            }
-        // 无关键帧样式只移动位置
-        } else {
-            Object.assign(nextStyle, currStyle, {
-                left: x,
-                top: y
-            });
-        }
-        nextStyle.position = 'absolute';
+            for (let key in keyframeStyle) {
+                let style = keyframeStyle[key];
+                if (typeof style === 'function') {
+                    // TODO: 此处返回值需要校验
+                    nextStyle[key] = style(x, y);
+                } else {
+                    nextStyle[key] = style;
+                }
+            }                    
+        } 
 
         return nextStyle;
     }
