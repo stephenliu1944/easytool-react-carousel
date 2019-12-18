@@ -26,9 +26,19 @@ export function drawEllipse(options = {}) {
         let x, y; 
         let radian = angleToRadian(i);
 
-        // 椭圆坐标计算公式
-        x = (a * b * cos(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
-        y = (a * b * sin(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
+        // 椭圆坐标分布计算公式
+        // 短轴分布稀疏
+        x = a * cos(radian);
+        y = b * sin(radian);
+        // 长轴分布稀疏
+        // x = (a * b * cos(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
+        // y = (a * b * sin(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
+        // 星形分布
+        // x = (a * b * cos(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
+        // y = (a * b * sin(radian)) / sqrt(square(a * cos(radian)) + square(b * sin(radian)));
+        // 正方形分布
+        // x = (a * b * cos(radian)) / sqrt(square(a * cos(radian)) + square(b * sin(radian)));
+        // y = (a * b * sin(radian)) / sqrt(square(a * sin(radian)) + square(b * cos(radian)));
 
         points.push({
             x: x + cx + fx,

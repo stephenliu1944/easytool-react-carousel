@@ -15,20 +15,36 @@ html, body{
     display: none;
 }
 
-.animation{
-    animation-name: myfirst;
-    animation-duration: 5s;
-    animation-timing-function: ease-in-out;
+.hide-animation{
+    animation-name: hide;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
 }
 
-@keyframes myfirst{
-    0%   {
+@keyframes hide {
+    0% {
         opacity: 1;
     }
-    50%   {
+    100% {
+        opacity: 0;
+    }
+}
+
+.show-animation{
+    animation-name: show;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show {
+    0% {
         opacity: 0;
     }
     100% {
         opacity: 1;
     }
+}
+
+.opacity{
+    opacity: 0;
 }

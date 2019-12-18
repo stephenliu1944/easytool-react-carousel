@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component, Children } from 'react';
 import { drawEllipse } from 'utils/geometry';
+import { requestAnimationFrame, cancelAnimationFrame } from 'utils/animation';
+import { drawReferenceLines } from 'utils/dom';
+
+const requestAnimation = requestAnimationFrame();
+const cancelAnimation = cancelAnimationFrame();
 
 export default class Carousel extends Component {
     
@@ -9,6 +14,7 @@ export default class Carousel extends Component {
     }
 
     static defaultProps = {
+        DEV: false,                 // 调试模式
         center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2],  // 中心点
         radiusX: 500,               // x轴椭圆半径
         radiusY: 300,               // y轴椭圆半径
@@ -64,7 +70,7 @@ export default class Carousel extends Component {
     }
     
     init() {
-        var { center, radiusX, radiusY, interval, distribution, children = [] } = this.props;
+        var { center, radiusX, radiusY, interval, distribution, children = [], DEV } = this.props;
         // 绘制椭圆轨道坐标
         this.state.ellipsePoints = drawEllipse({
             center,
@@ -74,6 +80,10 @@ export default class Carousel extends Component {
         });     
         // 为子元素分配坐标
         this.state.distributionPoints = distributePoints(distribution, children, this.state.ellipsePoints);
+        
+        if (DEV) {
+            drawReferenceLines(this.state.ellipsePoints);
+        }
     }
 
     rotateElements = () => {
@@ -84,7 +94,7 @@ export default class Carousel extends Component {
             let distributionIndex = 0;
             // 注意: Children.map() 会给每个 key 递归增加层级符号.$.$.$key..., react issues 11464.
             // TODO: 更换此方法
-            this.state.elements = Children.map(children, (child, index) => {
+            let newElements = Children.map(children, (child, index) => {
                 // 注意: 这里第一次 elements 是空的, 是从 child 取值, 之后是从 elements[index] 中取值.
                 let element = elements[index] || child;
                 let { className, style: currStyle = {}, backstyle: backStyle, keyframe: elKeyframe = [], ignore, point, offset: childOffset = [0, 0] } = element.props;
@@ -110,18 +120,20 @@ export default class Carousel extends Component {
                 let copyElement = React.cloneElement(child, {
                     className: this.getNextClassName(className, keyframeOpt),
                     style: this.getNextStyle(currStyle, keyframeOpt, x, y),
-                    point: nextPoint
+                    point: this.getNextPoint(nextPoint, keyframeOpt)
                     // backstyle: this.getBackupStyle(backStyle || currStyle, keyframe[nextPoint.angle])    // 保留关键帧之前的样式 
                 });    
 
                 return copyElement;
             });
 
-            this.setState(this.state);
+            this.setState({
+                elements: newElements
+            });
         }
 
-        this._animator = requestAnimationFrame(this.rotateElements);
-        // this._animator = setTimeout(this.rotateElements, 60);
+        this._animationFrame = requestAnimation(this.rotateElements);
+        // this._animationFrame = setTimeout(this.rotateElements, 1000 / 60); 16.6666667;
     }
     // 计算下一帧的class
     getNextClassName(currClassName = '', keyframeClassName) {
@@ -129,7 +141,10 @@ export default class Carousel extends Component {
             ? keyframeClassName : currClassName;
         
         if (typeof nextClassName === 'function') {
-            nextClassName = nextClassName(currClassName) || '';            
+            nextClassName = nextClassName(currClassName) || '';
+            if (Array.isArray(nextClassName)) {
+                return nextClassName.join(' ').trim();
+            }
         }
 
         if (typeof nextClassName !== 'string') {
@@ -162,6 +177,11 @@ export default class Carousel extends Component {
         return nextStyle;
     }
 
+    getNextPoint(point, keyframePoint) {
+        // TODO: 元素跳跃功能, keyframe.value为数字时
+        return point;
+    }
+
     getBackupStyle(backStyle, keyframeStyle) {
         if (keyframeStyle) {
             // 保留上一针的样式 
@@ -170,8 +190,8 @@ export default class Carousel extends Component {
     }
 
     destroy() {
-        cancelAnimationFrame(this._animator);
-        delete this._animator;
+        cancelAnimation(this._animationFrame);
+        delete this._animationFrame;
         delete this.state.elements;
         delete this.state.ellipsePoints;
         delete this.state.distributionPoints;
@@ -179,6 +199,7 @@ export default class Carousel extends Component {
 }
 
 Carousel.propTypes = {
+    DEV: PropTypes.bool,
     center: PropTypes.array,
     radiusX: PropTypes.number,           
     radiusY: PropTypes.number,           
@@ -251,10 +272,10 @@ function distributePointsByCount(options) {
     return distPoints;
 }
 // 找上一个节点
-function findPrevPoint(point, points, speed = 1) {
+function findPrevPoint(point, points, speed = 0) {
     return points[point.index - speed] || points[points.length - 1];
 }
 // 找下一个节点
-function findNextPoint(point, points, speed = 1) {
+function findNextPoint(point, points, speed = 0) {
     return points[point.index + speed] || points[0];
 }

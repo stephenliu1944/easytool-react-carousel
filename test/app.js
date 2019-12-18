@@ -12,12 +12,6 @@ import fPNG from './images/f.png';
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
-const KeyframeStyle = {
-    width: 300,
-    height: 500,
-    top(y) { return y - 100;},
-    left(x) { return x - 50;}
-};
 const CENTER_HEIGHT_OFFSET = 40;
 const RADIUS_X_PERCENT = 0.625;     // 600 / (document.documentElement.clientWidth / 2)
 const RADIUS_Y_PERCENT =  0.451;    // 210 / (document.documentElement.clientHeight / 2)
@@ -26,6 +20,7 @@ export default class App extends Component {
     
     state = {
         carousel: {
+            DEV: true,
             center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
             radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,                // x轴椭圆半径
             radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT,               // y轴椭圆半径
@@ -38,15 +33,11 @@ export default class App extends Component {
             keyframe: {                 // TODO: 关键帧, 如何保留上一针的位置
                 90: {
                     transform(x, y) {
-                        return 'translate(10px, 10px)';
+                        return 'scale(0.5)';
                     }
                 },
-                180: c => {
-                    return c + ' animation';
-                }, 
-                0: c => {
-                    return c.replace('animation', '');
-                }
+                200: className => ['hide-animation'],
+                330: className => ['show-animation']
             }
         }
     }
@@ -96,11 +87,11 @@ export default class App extends Component {
         return (
             <div className="app">
                 <Carousel {...this.state.carousel} >
-                    <img className="1" src={aPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="2" src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="3" src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={ePNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img src={aPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="opacity" src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="opacity" src={ePNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
                     <div>
                         <img src={fPNG} width={200} height={200} onClick={this.gotoAssessment} />
                     </div>

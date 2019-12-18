@@ -192,7 +192,8 @@ export default class App extends Component {
 
 ## API
 ```
-<Carousel 
+<Carousel
+    DEV: boolean, 开发模式, 会有红色参考线, 默认为false.
     center: array, 椭圆的中心点, 默认为屏幕中心.
     radiusX: number, 椭圆的 x 轴半径, x 和 y 相等时为正圆, 默认为500.
     radiusY: number, 椭圆的 y 轴半径, x 和 y 相等时为正圆, 默认为300.
@@ -207,8 +208,8 @@ export default class App extends Component {
         为 function 表示自定义分布, 方法接收圆上所有坐标的数组, 返回筛选出的节点数组作为分布点.
     keyframe: object, 全局关键帧(角度)样式, key 为数字表示角度, value 有4种使用方式:
         {
-            0: 'className',             // 关键帧替换的 class
-            90: className => className  // 关键帧为方法时接收当前元素的 className, 返回值将作为元素新的 className.
+            0: 'className',             // 关键帧为 string 时, 将替换元素 className
+            90: className => className  // 关键帧为 function 时, 接收当前元素的 className, 返回值将作为元素新的 className, 多个className可以用数组表示.
             180: {                      // 关键帧覆盖的样式
                 width: 100,
                 height: 100
