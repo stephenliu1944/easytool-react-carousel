@@ -1,6 +1,6 @@
 {
   "name": "@easytool/react-carousel",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "React Carousel UI Component",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -106,7 +106,7 @@
   },
   "devEnvironments": {
     "servers": {
-      "local": 8080
+      "local": 8081
     }
   },
   "deploy": {

@@ -143,7 +143,7 @@ export default class Carousel extends Component {
         if (typeof nextClassName === 'function') {
             nextClassName = nextClassName(currClassName) || '';
             if (Array.isArray(nextClassName)) {
-                return nextClassName.join(' ').trim();
+                return nextClassName.filter(cn => cn).map(cn => cn.trim()).join(' ');
             }
         }
 

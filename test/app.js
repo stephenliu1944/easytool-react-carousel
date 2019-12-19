@@ -29,15 +29,15 @@ export default class App extends Component {
             anticlockwise: false,       // 是否逆时针旋转
             speed: 1,
             pause: false,               // 是否暂停
-            // distribution: [90, 162, 234, 306, 18],               // 手动分配元素所在位置(角度)
-            keyframe: {                 // TODO: 关键帧, 如何保留上一针的位置
-                90: {
-                    transform(x, y) {
-                        return 'scale(0.5)';
-                    }
-                },
-                200: className => ['hide-animation'],
-                330: className => ['show-animation']
+            distribution: [18, 90, 162, 234, 306],  // 按指定角度位置分布元素
+            keyframe: {                             // TODO: 关键帧, 如何保留上一针的位置
+                // 90: {
+                //     transform(x, y) {
+                //         return 'scale(0.5)';
+                //     }
+                // },
+                240: className => [className.replace('show-animation', ''), 'hide-animation'],
+                300: className => [className.replace('hide-animation', ''), 'show-animation']
             }
         }
     }
@@ -87,12 +87,12 @@ export default class App extends Component {
         return (
             <div className="app">
                 <Carousel {...this.state.carousel} >
-                    <img src={aPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="opacity" src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <img className="opacity" src={ePNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
-                    <div>
+                    <img className="gundam" src={aPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="gundam" src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="gundam" src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="gundam" src={dPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <img className="gundam" src={ePNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+                    <div className="gundam center" ignore="true">
                         <img src={fPNG} width={200} height={200} onClick={this.gotoAssessment} />
                     </div>
                 </Carousel>

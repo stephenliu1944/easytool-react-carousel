@@ -48,3 +48,15 @@ html, body{
 .opacity{
     opacity: 0;
 }
+
+.gundam {
+    z-index: 10;
+    width: 200px;
+    height: 200px;
+}
+.center{
+    z-index: 1;
+    position: absolute;
+    top: calc(100vh / 2 - 100px);
+    left: calc(100vw / 2 - 100px);
+}
