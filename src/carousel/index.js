@@ -72,6 +72,7 @@ export default class Carousel extends Component {
     init() {
         var { center, radiusX, radiusY, interval, distribution, children = [], DEV } = this.props;
         // 绘制椭圆轨道坐标
+        // TODO: 该方法可以抽象, 返回对象集合: [{x, y, key(当前所在角度), index}, ...]
         this.state.ellipsePoints = drawEllipse({
             center,
             radiusX,
