@@ -36,17 +36,13 @@ render(
 ```jsx
 function App(props) {
     return (
-        <Carousel>
+        <Carousel radiusX="400" radiusY="300">
             <img src={ xxx } width={200} height={200} />
             <img src={ xxx } width={200} height={200} />
         </Carousel>
-        <Carousel>
-            <div>
-                <img src={ xxx } width={200} height={200} />
-            </div>
-            <div>
-                <img src={ xxx } width={200} height={200} />
-            </div>
+        <Carousel radiusX="300" radiusY="200">
+            <img src={ xxx } width={200} height={200} />
+            <img src={ xxx } width={200} height={200} />
         </Carousel>>
     );
 }
@@ -57,34 +53,28 @@ function App(props) {
 export default class App extends Component {
 
     state = {
-        carousel: {}
+        pause: false
     }
 
-    handleClick = () => {
-        ...
+    handleClick = (e) => {
+        console.log(e.target);
     }
 
     handleMouseEnter = (e) => {
         this.setState({
-            carousel: {
-                ...this.state.carousel,
-                pause: true
-            }
+            pause: true
         });
     }
 
     handleMouseLeave = (e) => {
-        this.setState({ 
-            carousel: {
-                ...this.state.carousel,
-                pause: false
-            }
+        this.setState({
+            pause: false
         });
     }
 
     render() {
         return (
-            <Carousel {...this.state.carousel} >
+            <Carousel {...this.state} >
                 <img src={ aPNG } width={200} height={200} onClick={this.handleClick} />
                 <img src={ bPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
             </Carousel>
@@ -101,11 +91,9 @@ const RADIUS_Y_PERCENT =  0.451;    // 210(y轴半径) / (document.documentEleme
 export default class App extends Component {
 
     state = {
-        carousel: {
-            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
-            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
-        }
+        center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
+        radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
+        radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
     }
 
     componentDidMount() {
@@ -118,18 +106,15 @@ export default class App extends Component {
 
     handleWindowResize = () => {
         this.setState({
-            carousel: {
-                ...this.state.carousel,
-                center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-                radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
-                radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
-            }
+            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
+            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
+            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
         });
     }
 
     render() {
         return (
-            <Carousel {...this.state.carousel} >
+            <Carousel {...this.state} >
                 <img src={ aPNG } width={200} height={200} onClick={this.handleClick} />
                 <img src={ bPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
             </Carousel>
@@ -140,46 +125,37 @@ export default class App extends Component {
 
 ### 配置属性
 ```jsx
-const KeyframeStyle = {
-    width: 300,
-    height: 500,
-    top(y) { return y - 100;},
-    left(x) { return x - 50;}
-};
 const CENTER_HEIGHT_OFFSET = 40;
 const RADIUS_X_PERCENT = 0.625;
 const RADIUS_Y_PERCENT =  0.451;
 export default class App extends Component {
 
     state = {
-        carousel: {
-            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,                // x轴椭圆半径
-            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT,               // y轴椭圆半径
-            interval: 1,                // 每个点的间距, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
-            offset: [-96, -166],        // 每个元素的偏移量
-            anticlockwise: true,        // 是否逆时针旋转
-            speed: 1,                   // 元素运动速度
-            pause: false,               // 是否暂停
-            keyframe: {                 // 关键角度样式
-                70: KeyframeStyle,                     
-                71: KeyframeStyle,                     
-                72: KeyframeStyle,                     
-                73: KeyframeStyle,                     
-                74: KeyframeStyle,                     
-                75: KeyframeStyle,                     
-                76: KeyframeStyle,                     
-                77: KeyframeStyle,                     
-                78: KeyframeStyle,                     
-                79: KeyframeStyle,                     
-                80: KeyframeStyles
-            }
+        center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
+        radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,                // x轴椭圆半径
+        radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT,               // y轴椭圆半径
+        interval: 1,                // 每个点的间距, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
+        offset: [-96, -166],        // 每个元素的偏移量
+        anticlockwise: true,        // 是否逆时针旋转
+        speed: 1,                   // 元素运动速度
+        pause: false,               // 是否暂停
+        keyframe: {                 // 关键位置样式
+            45: {
+                width: 300,
+                height: 500
+            },
+            90: {
+                left: (x, y) => x + 10,
+                top: (x, y) => y + 10
+            },
+            180: 'hide',
+            270: className => ['animation']
         }
     }
 
     render() {
         return (
-            <Carousel {...this.state.carousel} >
+            <Carousel {...this.state} >
                 <img src={ xxx } width={200} height={200} />
                 <img src={ xxx } width={200} height={200} />
                 <img src={ xxx } width={200} height={200} />
@@ -206,7 +182,7 @@ export default class App extends Component {
         为 object 时表示在指定角度均匀分布, 如: {startAngle: 0, endAngle: 180};
         为 array 时表示手动分布, 如: [0, 90, 180, 270], 数组元素个数需与轨道上的元素个数对应;
         为 function 表示自定义分布, 方法接收圆上所有坐标的数组, 返回筛选出的节点数组作为分布点.
-    keyframe: object, 全局关键帧(角度)样式, key 为数字表示角度, value 有4种使用方式:
+    keyframe: object, 全局关键帧(位置)样式, key 为数字表示角度, value 有4种使用方式:
         {
             0: 'className',             // 关键帧为 string 时, 将替换元素 className
             90: className => className  // 关键帧为 function 时, 接收当前元素的 className, 返回值将作为元素新的 className, 多个className可以用数组表示.
