@@ -14,14 +14,15 @@ import Carousel from '@easytool/react-carousel';
 
 function App(props) {
     return (
-        <Carousel>
-            <img src={ xxx } width={200} height={200} />
-            <img src={ xxx } width={200} height={200} />
-            <img src={ xxx } width={200} height={200} />
+        // 需要为组件设置 width, height, 也可为组件分配一个 className, 并在css文件中配置 width 和 height.
+        <Carousel style={{width: 300, height: 200}}>
+            <img src={ aPNG } width={200} height={200} />
+            <img src={ bPNG } width={200} height={200} />
+            <img src={ cPNG } width={200} height={200} />
             // offset设置该元素的偏移量
-            <img src={ xxx } width={200} height={200} offset={[50, 50]} />
+            <img src={ dPNG } width={200} height={200} offset={[50, 50]} />
             // ignore忽略该元素
-            <img src={ xxx } width={200} height={200} ignore="true" />
+            <img src={ ePNG } width={200} height={200} ignore="true" />
         </Carousel>
     );
 }
@@ -36,13 +37,13 @@ render(
 ```jsx
 function App(props) {
     return (
-        <Carousel radiusX="400" radiusY="300">
-            <img src={ xxx } width={200} height={200} />
-            <img src={ xxx } width={200} height={200} />
+        <Carousel radiusX="400" radiusY="300" style={{width: 600, height: 600}}>
+            <img src={ aPNG } width={200} height={200} />
+            <img src={ bPNG } width={200} height={200} />
         </Carousel>
-        <Carousel radiusX="300" radiusY="200">
-            <img src={ xxx } width={200} height={200} />
-            <img src={ xxx } width={200} height={200} />
+        <Carousel radiusX="300" radiusY="200" className="carousel">
+            <img src={ cPNG } width={200} height={200} />
+            <img src={ dPNG } width={200} height={200} />
         </Carousel>>
     );
 }
@@ -74,7 +75,7 @@ export default class App extends Component {
 
     render() {
         return (
-            <Carousel {...this.state} >
+            <Carousel className="carousel" {...this.state} >
                 <img src={ aPNG } width={200} height={200} onClick={this.handleClick} />
                 <img src={ bPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
             </Carousel>
@@ -85,15 +86,11 @@ export default class App extends Component {
   
 ### 窗口自适应
 ```jsx
-const CENTER_HEIGHT_OFFSET = 40;
-const RADIUS_X_PERCENT = 0.625;     // 600(x轴半径) / (document.documentElement.clientWidth / 2)
-const RADIUS_Y_PERCENT =  0.451;    // 210(y轴半径) / (document.documentElement.clientHeight / 2)
 export default class App extends Component {
 
     state = {
-        center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-        radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
-        radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
+        radiusX: 300,
+        radiusY: 200
     }
 
     componentDidMount() {
@@ -105,16 +102,19 @@ export default class App extends Component {
     }
 
     handleWindowResize = () => {
+        var container = this.carouselRef.getContainer();
+        var style = window.getComputedStyle(container);
+        var x = style.width.slice(0, -2) / 2;
+        var y = style.height.slice(0, -2) / 2;
+
         this.setState({
-            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
-            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
+            center: [x, y]
         });
     }
 
     render() {
         return (
-            <Carousel {...this.state} >
+            <Carousel className="carousel" {...this.state} ref={(carousel) => this.carouselRef = carousel}>
                 <img src={ aPNG } width={200} height={200} onClick={this.handleClick} />
                 <img src={ bPNG } width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
             </Carousel>
@@ -125,15 +125,12 @@ export default class App extends Component {
 
 ### 配置属性
 ```jsx
-const CENTER_HEIGHT_OFFSET = 40;
-const RADIUS_X_PERCENT = 0.625;
-const RADIUS_Y_PERCENT =  0.451;
 export default class App extends Component {
 
     state = {
-        center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-        radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,                // x轴椭圆半径
-        radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT,               // y轴椭圆半径
+        center: [500, 500],         // 椭圆中心点
+        radiusX: 300,               // x轴椭圆半径
+        radiusY: 200,               // y轴椭圆半径
         interval: 1,                // 每个点的间距, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
         offset: [-96, -166],        // 每个元素的偏移量
         anticlockwise: true,        // 是否逆时针旋转
@@ -155,11 +152,11 @@ export default class App extends Component {
 
     render() {
         return (
-            <Carousel {...this.state} >
-                <img src={ xxx } width={200} height={200} />
-                <img src={ xxx } width={200} height={200} />
-                <img src={ xxx } width={200} height={200} />
-                <img src={ xxx } width={200} height={200} />
+            <Carousel className="carousel" {...this.state} >
+                <img src={ aPNG } width={200} height={200} />
+                <img src={ bPNG } width={200} height={200} />
+                <img src={ cPNG } width={200} height={200} />
+                <img src={ dPNG } width={200} height={200} />
             </Carousel>
         );
     }
@@ -170,9 +167,9 @@ export default class App extends Component {
 ```
 <Carousel
     DEV: boolean, 开发模式, 会有红色参考线, 默认为false.
-    center: array, 椭圆的中心点, 默认为屏幕中心.
-    radiusX: number, 椭圆的 x 轴半径, x 和 y 相等时为正圆, 默认为500.
-    radiusY: number, 椭圆的 y 轴半径, x 和 y 相等时为正圆, 默认为300.
+    center: array, 椭圆的中心点, 默认为组件的中心.
+    radiusX: number, 椭圆的 x 轴半径, x 和 y 相等时为正圆, 默认为组件宽度的一半.
+    radiusY: number, 椭圆的 y 轴半径, x 和 y 相等时为正圆, 默认为组件高度的一半.
     interval: number, 椭圆中每个相邻坐标点的间距, 默认为1, 目前最小为0.1, 值越小生成的圆点坐标越多, 为1生成360个点, 为0.1生成3600个点.
     offset: array, 椭圆轨道上每个元素的全局偏移量, 还可在元素自身属性上设置偏移量, 默认为[0, 0].
     anticlockwise: boolean, 是否逆时针旋转, 默认false.

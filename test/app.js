@@ -19,26 +19,23 @@ const RADIUS_Y_PERCENT =  0.451;    // 210 / (document.documentElement.clientHei
 export default class App extends Component {
     
     state = {
-        carousel: {
-            DEV: true,
-            center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-            radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,                // x轴椭圆半径
-            radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT,               // y轴椭圆半径
-            interval: 1,                // 每个点的间距, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
-            offset: [-96, -166],        // 每个元素的偏移量
-            anticlockwise: false,       // 是否逆时针旋转
-            speed: 1,
-            pause: false,               // 是否暂停
-            distribution: [18, 90, 162, 234, 306],  // 按指定角度位置分布元素
-            keyframe: {                             // TODO: 关键帧, 如何保留上一针的位置
-                // 90: {
-                //     transform(x, y) {
-                //         return 'scale(0.5)';
-                //     }
-                // },
-                240: className => [className.replace('show-animation', ''), 'hide-animation'],
-                300: className => [className.replace('hide-animation', ''), 'show-animation']
-            }
+        DEV: true,
+        radiusX: 600,               // x轴椭圆半径
+        radiusY: 210,               // y轴椭圆半径
+        interval: 1,                // 每个点的间距, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
+        offset: [-96, -166],        // 每个元素的偏移量
+        anticlockwise: true,       // 是否逆时针旋转
+        speed: 1,
+        pause: false,               // 是否暂停
+        distribution: [18, 90, 162, 234, 306],  // 按指定角度位置分布元素
+        keyframe: {                             // TODO: 关键帧, 如何保留上一针的位置
+            // 90: {
+            //     transform(x, y) {
+            //         return 'scale(0.5)';
+            //     }
+            // },
+            0: className => [className.replace('show-animation', ''), 'hide-animation'],
+            180: className => [className.replace('hide-animation', ''), 'show-animation']
         }
     }
 
@@ -51,31 +48,25 @@ export default class App extends Component {
     }
 
     handleWindowResize = () => {
+        var container = this.carouselRef.getContainer();
+        var style = window.getComputedStyle(container);
+        var x = style.width.slice(0, -2) / 2;
+        var y = style.height.slice(0, -2) / 2;
+
         this.setState({
-            carousel: {
-                ...this.state.carousel,
-                center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2 + CENTER_HEIGHT_OFFSET],
-                radiusX: document.documentElement.clientWidth / 2 * RADIUS_X_PERCENT,              // x轴椭圆半径
-                radiusY: document.documentElement.clientHeight / 2 * RADIUS_Y_PERCENT              // y轴椭圆半径
-            }
+            center: [x, y]
         });
     }
 
     handleMouseEnter = (e) => {
         this.setState({ 
-            carousel: {
-                ...this.state.carousel,
-                pause: true
-            }
+            pause: true
         });
     }
 
     handleMouseLeave = (e) => {
         this.setState({ 
-            carousel: {
-                ...this.state.carousel,
-                pause: false
-            }
+            pause: false
         });
     }
 
@@ -86,7 +77,7 @@ export default class App extends Component {
     render() {
         return (
             <div className="app">
-                <Carousel {...this.state.carousel} >
+                <Carousel {...this.state} ref={(carousel) => this.carouselRef = carousel} className="carousel">
                     <img className="gundam" src={aPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
                     <img className="gundam" src={bPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
                     <img className="gundam" src={cPNG} width={200} height={200} onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />

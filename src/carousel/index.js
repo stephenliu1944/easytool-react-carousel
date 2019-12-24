@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { Component, Children } from 'react';
-import { drawEllipse } from 'utils/geometry';
 import { requestAnimationFrame, cancelAnimationFrame } from 'utils/animation';
 import { drawReferenceLines } from 'utils/dom';
+import { drawEllipse } from 'utils/geometry';
+import { isEmpty } from 'utils/common';
 
 const requestAnimation = requestAnimationFrame();
 const cancelAnimation = cancelAnimationFrame();
@@ -15,9 +16,6 @@ export default class Carousel extends Component {
 
     static defaultProps = {
         DEV: false,                 // 调试模式
-        center: [document.documentElement.clientWidth / 2, document.documentElement.clientHeight / 2],  // 中心点
-        radiusX: 500,               // x轴椭圆半径
-        radiusY: 300,               // y轴椭圆半径
         interval: 1,                // 轨道上的每个坐标点占多少度, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
         offset: [0, 0],             // 每个元素的偏移量
         speed: 1,                   // 元素每次移动几格, 最少为1
@@ -42,8 +40,8 @@ export default class Carousel extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        var { center: prevCenter, radiusX: prevRadiusX, radiusY: prevRadiusY } = prevProps;
-        var { center, radiusX, radiusY } = this.props;
+        var { center: prevCenter = [], radiusX: prevRadiusX, radiusY: prevRadiusY } = prevProps;
+        var { center = [], radiusX, radiusY } = this.props;
 
         if (center[0] !== prevCenter[0] 
             || center[1] !== prevCenter[1]
@@ -63,14 +61,26 @@ export default class Carousel extends Component {
         let { id, className, style = {} } = this.props;
 
         return (
-            <div id={id} className={className} style={{ position: 'relative', ...style }}>
+            <div ref={this.setContainer} id={id} className={className} style={{ position: 'relative', ...style }}>
                 { this.state.elements }
             </div>
         );
     }
     
+    setContainer = (div) => {
+        this.container = div;
+    }
+
+    getContainer = () => {
+        return this.container;
+    }
+
     init() {
-        var { center, radiusX, radiusY, interval, distribution, children = [], DEV } = this.props;
+        // 默认 center 为容器的中心点
+        var style = window.getComputedStyle(this.container);
+        var x = style.width.slice(0, -2) / 2;
+        var y = style.height.slice(0, -2) / 2;
+        var { center = [x, y], radiusX = x, radiusY = y, interval, distribution, children = [], DEV } = this.props;
         // 绘制椭圆轨道坐标
         // TODO: 该方法可以抽象, 返回对象集合: [{x, y, key(当前所在角度), index}, ...]
         this.state.ellipsePoints = drawEllipse({
@@ -83,7 +93,7 @@ export default class Carousel extends Component {
         this.state.distributionPoints = distributePoints(distribution, children, this.state.ellipsePoints);
         
         if (DEV) {
-            drawReferenceLines(this.state.ellipsePoints);
+            drawReferenceLines(this.container, this.state.ellipsePoints);
         }
     }
 
@@ -91,10 +101,9 @@ export default class Carousel extends Component {
         var { offset = [0, 0], anticlockwise, speed = 1, pause = false, keyframe = {}, children = [] } = this.props;
         var { elements = [], ellipsePoints = [], distributionPoints = [] } = this.state;
 
-        if (!pause) {
+        if (isEmpty(elements) || !pause) {
             let distributionIndex = 0;
-            // 注意: Children.map() 会给每个 key 递归增加层级符号.$.$.$key..., react issues 11464.
-            // TODO: 更换此方法
+            // 注意: Children.map() 会给每个 key 递归增加层级符号.$.$.$key..., react issues 11464.            
             let newElements = Children.map(children, (child, index) => {
                 // 注意: 这里第一次 elements 是空的, 是从 child 取值, 之后是从 elements[index] 中取值.
                 let element = elements[index] || child;

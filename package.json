@@ -1,6 +1,6 @@
 {
   "name": "@easytool/react-carousel",
-  "version": "0.1.9",
+  "version": "0.1.11",
   "description": "React Carousel UI Component",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
