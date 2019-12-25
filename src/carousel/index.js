@@ -3,11 +3,15 @@ import React, { Component, Children } from 'react';
 import { requestAnimationFrame, cancelAnimationFrame } from 'utils/animation';
 import { drawReferenceLines } from 'utils/dom';
 import { drawEllipse } from 'utils/geometry';
-import { isEmpty } from 'utils/common';
+import { isEmpty, getDecimalDigits } from 'utils/common';
 
+const IntervalType = {
+    SMALL: 0.1,
+    MEDIUM: 1,
+    LARGE: 10
+};
 const requestAnimation = requestAnimationFrame();
 const cancelAnimation = cancelAnimationFrame();
-
 export default class Carousel extends Component {
     
     constructor(props) {
@@ -15,23 +19,23 @@ export default class Carousel extends Component {
     }
 
     static defaultProps = {
-        DEV: false,                 // 调试模式
-        interval: 1,                // 轨道上的每个坐标点占多少度, 为1时一圈生成360个点, 0.1时生成3600个点, 最少0.1
-        offset: [0, 0],             // 每个元素的偏移量
-        speed: 1,                   // 元素每次移动几格, 最少为1
-        anticlockwise: false,       // 是否逆时针旋转
-        pause: false,               // 是否暂停
-        distribution: {             // 支持三种类型 object{startAngle, endAngle}, array[angle1, angle2], function(allPoints, elements);
+        DEV: false,                     // 调试模式
+        interval: 1,                    // 轨道上每个坐标点的间距, medium 间距为1, 一圈生成360个点, small 间距为0.1, 一圈生成3600个点, large 间距为10, 一圈生成36个点.
+        offset: [0, 0],                 // 每个元素的偏移量
+        speed: 1,                       // 元素每次移动几格, 最少为1
+        anticlockwise: false,           // 是否逆时针旋转
+        pause: false,                   // 是否暂停
+        distribution: {                 // 支持三种类型 object{startAngle, endAngle}, array[angle1, angle2], function(allPoints, elements);
             startAngle: 0, 
             endAngle: 360
         },         
-        keyframe: {}                // 关键帧(角度), key为角度, value为样式属性, top 和 left 可以为方法, 方法接收1个参数, 为当前的top或left.
+        keyframe: {}                    // 关键帧(角度), key为角度, value为样式属性, top 和 left 可以为方法, 方法接收1个参数, 为当前的top或left.
     }
 
     state = {
-        ellipsePoints: [],          // 轨道坐标集合
-        distributionPoints: [],
-        elements: []                // 轨道上的元素集合, 每个 element 上可以有 offset 和 ignore 两个自定义属性
+        elements: [],                   // 轨道上的元素集合, 每个 element 上可以有 offset 和 ignore 两个自定义属性
+        allPoints: [],                  // 轨道坐标集合
+        distributionPoints: []
     };
     
     componentDidMount() {
@@ -40,13 +44,14 @@ export default class Carousel extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        var { center: prevCenter = [], radiusX: prevRadiusX, radiusY: prevRadiusY } = prevProps;
-        var { center = [], radiusX, radiusY } = this.props;
+        var { center: prevCenter = [], radiusX: prevRadiusX, radiusY: prevRadiusY, interval: prevInterval } = prevProps;
+        var { center = [], radiusX, radiusY, interval } = this.props;
 
         if (center[0] !== prevCenter[0] 
             || center[1] !== prevCenter[1]
             || radiusX !== prevRadiusX 
-            || radiusY !== prevRadiusY) {
+            || radiusY !== prevRadiusY
+            || interval !== prevInterval) {
             this.destroy();
             this.init();
             this.rotateElements();
@@ -81,25 +86,30 @@ export default class Carousel extends Component {
         var x = style.width.slice(0, -2) / 2;
         var y = style.height.slice(0, -2) / 2;
         var { center = [x, y], radiusX = x, radiusY = y, interval, distribution, children = [], DEV } = this.props;
+        var intervalNum = parseInterval(interval);
         // 绘制椭圆轨道坐标
         // TODO: 该方法可以抽象, 返回对象集合: [{x, y, key(当前所在角度), index}, ...]
-        this.state.ellipsePoints = drawEllipse({
+        this.state.allPoints = drawEllipse({
             center,
             radiusX,
             radiusY,
-            interval
+            interval: intervalNum
         });     
+
+        if (children.length > this.state.allPoints.length) {
+            throw `Child elements exceeds the maximum value (${this.state.allPoints.length}), please increase the interval props or decrease child element count.`;
+        }
         // 为子元素分配坐标
-        this.state.distributionPoints = distributePoints(distribution, children, this.state.ellipsePoints);
+        this.state.distributionPoints = distributePoints(distribution, intervalNum, children, this.state.allPoints);
         
         if (DEV) {
-            drawReferenceLines(this.container, this.state.ellipsePoints);
+            drawReferenceLines(this.container, this.state.allPoints);
         }
     }
 
     rotateElements = () => {
         var { offset = [0, 0], anticlockwise, speed = 1, pause = false, keyframe = {}, children = [] } = this.props;
-        var { elements = [], ellipsePoints = [], distributionPoints = [] } = this.state;
+        var { elements = [], allPoints = [], distributionPoints = [] } = this.state;
 
         if (isEmpty(elements) || !pause) {
             let distributionIndex = 0;
@@ -119,9 +129,9 @@ export default class Carousel extends Component {
                 point = point || distributionPoints[distributionIndex++];
 
                 if (anticlockwise) {
-                    nextPoint = findPrevPoint(point, ellipsePoints, speed);
+                    nextPoint = findPrevPoint(point, allPoints, speed);
                 } else {
-                    nextPoint = findNextPoint(point, ellipsePoints, speed);
+                    nextPoint = findNextPoint(point, allPoints, speed);
                 }
 
                 let x = nextPoint.x + offset[0] + childOffset[0];
@@ -203,7 +213,7 @@ export default class Carousel extends Component {
         cancelAnimation(this._animationFrame);
         delete this._animationFrame;
         delete this.state.elements;
-        delete this.state.ellipsePoints;
+        delete this.state.allPoints;
         delete this.state.distributionPoints;
     }
 }
@@ -214,11 +224,30 @@ Carousel.propTypes = {
     radiusX: PropTypes.number,           
     radiusY: PropTypes.number,           
     offset: PropTypes.array,       
-    interval: PropTypes.number,          
+    interval: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ]),
     speed: PropTypes.number,             
     anticlockwise: PropTypes.bool,       
     pause: PropTypes.bool
 };
+
+function parseInterval(interval) {
+    if (typeof interval === 'string') {
+        return IntervalType[interval.toUpperCase()] || IntervalType.MEDIUM;
+    } else if (typeof interval === 'number') {
+        // if (interval > 10) {
+        //     return IntervalType.LARGE;
+        // } else if (interval < 0.1) {
+        //     return IntervalType.SMALL;
+        // }
+
+        return interval;
+    }
+
+    return IntervalType.MEDIUM;
+}
 
 function getElementsPointCount(elements) {
     var count = 0;
@@ -232,11 +261,11 @@ function getElementsPointCount(elements) {
     return count;
 }
 
-function distributePoints(distribution, elements = [], allPoints = []) {
+function distributePoints(distribution, interval, elements = [], allPoints = []) {
     var points;
 
     if (typeof distribution === 'function') {       // 根据自定义方法分配
-        points = distribution(allPoints);
+        points = distribution(allPoints, interval);
     } else if (Array.isArray(distribution)) {       // 根据提供的坐标集合分配
         points = distributePointsByAngle(distribution, allPoints);
     } else if (typeof distribution === 'object') {  // 根据限定的角度范围分配
@@ -244,6 +273,7 @@ function distributePoints(distribution, elements = [], allPoints = []) {
         points = distributePointsByCount({
             points: allPoints,
             count: getElementsPointCount(elements),
+            interval,
             startAngle,
             endAngle
         });
@@ -255,25 +285,25 @@ function distributePoints(distribution, elements = [], allPoints = []) {
 }
 
 function distributePointsByAngle(angles = [], points = []) {
-    return points.filter((point) => {
-        return angles.includes(point.angle);
-    });
+    return points.filter(point => angles.includes(point.angle));
 }
 
 function distributePointsByCount(options) {
-    let { points: allPoints = [], count = 0, startAngle = 0, endAngle = 360 } = Object.assign({}, options);
-    let avgAngle = Math.floor((endAngle - startAngle) / count);
+    let { points: allPoints = [], count = 0, interval, startAngle = 0, endAngle = 360 } = Object.assign({}, options);
+    let digits = getDecimalDigits(interval);    
+    let fixed = digits * 10 || 1;               // fixed 为了提高 avgAngle 值精度, interval 小于1时可使均分更精确
+    let avgAngle = Math.floor((endAngle - startAngle) / count * fixed) / fixed;
     let points = [];
     let start = startAngle;
 
     for (let i = 0; i < count; i++) {
-        points.push(start + i * avgAngle);
+        points.push(+(start + i * avgAngle).toFixed(digits));   // 解决 IEEE 754 64位双精度浮点数编码问题
     }
 
     let distPoints = allPoints.filter((point) => {
         return points.includes(point.angle);
     });
-    
+
     return distPoints;
 }
 // 找上一个节点

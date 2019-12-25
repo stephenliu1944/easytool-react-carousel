@@ -130,3 +130,17 @@ export function throttle(func, wait, options) {
         return result;
     };
 }
+
+export function getDecimalDigits(num) {
+    if (!num || num === 0 || isNaN(num)) {
+        return 0;
+    }
+
+    let arr = num.toString().split('.');
+
+    if (arr.length <= 1) {
+        return 0;
+    } 
+
+    return arr[1].length;
+}

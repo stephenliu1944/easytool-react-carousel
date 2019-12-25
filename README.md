@@ -179,7 +179,7 @@ export default class App extends Component {
         为 object 时表示在指定角度均匀分布, 如: {startAngle: 0, endAngle: 180};
         为 array 时表示手动分布, 如: [0, 90, 180, 270], 数组元素个数需与轨道上的元素个数对应;
         为 function 表示自定义分布, 方法接收圆上所有坐标的数组, 返回筛选出的节点数组作为分布点.
-    keyframe: object, 全局关键帧(位置)样式, key 为数字表示角度, value 有4种使用方式:
+    keyframe: object, 全局关键帧(角度)样式, 角度以3点位置开始为0度, 顺时针计算(6点90度, 9点180度, 12点270度), key 为数字表示角度, value 有4种使用方式:
         {
             0: 'className',             // 关键帧为 string 时, 将替换元素 className
             90: className => className  // 关键帧为 function 时, 接收当前元素的 className, 返回值将作为元素新的 className, 多个className可以用数组表示.

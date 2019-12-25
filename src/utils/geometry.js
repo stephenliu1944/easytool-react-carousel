@@ -1,3 +1,5 @@
+import { getDecimalDigits } from './common';
+
 // 乘方
 export function square(num) {
     return num * num;
@@ -10,10 +12,9 @@ export function radianToAngle(radian) {
 export function angleToRadian(angle) {
     return Math.PI / 180 * angle;
 }
-// 画椭圆形
+// 画椭圆形, TODO: 抽象此方法, 以360度绘制任何图形.
 export function drawEllipse(options = {}) {
     const { sin, cos, sqrt } = Math;
-    const precision = 10000;
     let { center = [], offset = [], radiusX = 500, radiusY = 100, interval = 1 } = Object.assign({}, options);
     let [cx = 0, cy = 0] = center;
     let [fx = 0, fy = 0] = offset;
@@ -21,6 +22,7 @@ export function drawEllipse(options = {}) {
     let b = radiusY;
     let points = [];
     let index = 0;
+    let digits = getDecimalDigits(interval);
 
     for (let i = 0; i < 360; ) {
         let x, y; 
@@ -46,8 +48,9 @@ export function drawEllipse(options = {}) {
             angle: i,
             index: index++
         });
-        // 避免 0.1 + 0.2 的问题, TODO: 优化
-        i = (i * precision + interval * precision) / precision;
+
+        // 避免 IEEE 754 双精度问题
+        i = +(i + interval).toFixed(digits);
     }
 
     // 返回椭圆上的所有坐标点数组
