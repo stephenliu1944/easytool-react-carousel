@@ -259,24 +259,19 @@ function distributePointsByAngle(angles = [], points = []) {
         return angles.includes(point.angle);
     });
 }
-// 该分布算法需要抽象为参数方法, 接收 points
-function distributePointsByCount(options) {
-    let { points = [], count = 0, startAngle = 0, endAngle = 360 } = Object.assign({}, options);
-    let filterPoints;
 
-    if ( startAngle > 0 || endAngle < 360) {
-        count -= 1;
-        filterPoints = points.filter((point) => {
-            return startAngle <= point.angle && point.angle <= endAngle;
-        });
-    } else {    
-        filterPoints = points;
+function distributePointsByCount(options) {
+    let { points: allPoints = [], count = 0, startAngle = 0, endAngle = 360 } = Object.assign({}, options);
+    let avgAngle = Math.floor((endAngle - startAngle) / count);
+    let points = [];
+    let start = startAngle;
+
+    for (let i = 0; i < count; i++) {
+        points.push(start + i * avgAngle);
     }
-    
-    let avgAngle = (endAngle - startAngle) / count;
-    
-    let distPoints = filterPoints.filter((point) => {
-        return point.angle % avgAngle === 0;
+
+    let distPoints = allPoints.filter((point) => {
+        return points.includes(point.angle);
     });
     
     return distPoints;
